@@ -1,1 +1,1 @@
-int sensorinit(uint8_t deviceaddress, uint16_t GPIO1pin, uint16_t TimingBudgetInMs, uint32_t InterMeasurementInMs, int16_t OffsetValue);
+void sensorinit(uint8_t deviceaddress, uint16_t GPIO1pin, uint16_t TimingBudgetInMs, uint32_t InterMeasurementInMs, int16_t OffsetValue);

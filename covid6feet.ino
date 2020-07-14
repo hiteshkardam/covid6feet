@@ -1,6 +1,8 @@
 #include <Wire.h>
 #include "VL53L1X_api.h"
+
 #include "VL53L1Xinit.h"
+#include "WS2812Bwrapper.h"
 
 uint8_t deviceaddress = 0x52;         //I2C address of the sensor
 uint16_t GPIO1pin = 4;                //VL53L1X interrupt pin
@@ -19,6 +21,8 @@ void IRAM_ATTR ISR()
 
 void setup()
 {
+  initWS2812B();
+  
   pinMode(GPIO1pin, INPUT_PULLUP);
   attachInterrupt(GPIO1pin, ISR, FALLING);
 
@@ -41,7 +45,5 @@ void loop()
     Serial.print(F("Distance(mm): "));
     Serial.println(distance);
   }
-
   VL53L1X_ClearInterrupt(deviceaddress);
-
 }

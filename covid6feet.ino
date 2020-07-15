@@ -1,9 +1,8 @@
 #include <Wire.h>
 #include "VL53L1X_api.h"
-//#include <Math.h>
 
-#include "VL53L1Xinit.h"
-#include "WS2812Bwrapper.h"
+#include "VL53L1X_custom.h"
+#include "WS2812B_wrapper.h"
 
 uint8_t deviceaddress = 0x52;         //I2C address of the sensor
 uint16_t GPIO1pin = 4;                //VL53L1X interrupt pin
@@ -26,18 +25,16 @@ void IRAM_ATTR ISR()
 
 void setup()
 {
-	Serial.println(F("-----------------------------------------------------------------------------"));
-	
-	initWS2812B();
-	
-	pinMode(GPIO1pin, INPUT_PULLUP);
-	attachInterrupt(digitalPinToInterrupt(GPIO1pin), ISR, FALLING);
-	
-	Wire.begin();
-	Wire.setClock(400000);
-	Serial.begin(115200);
-	
-	sensorinit(deviceaddress, GPIO1pin, TimingBudgetInMs, InterMeasurementInMs, OffsetValue);
+  initWS2812B();
+  
+  pinMode(GPIO1pin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(GPIO1pin), ISR, FALLING);
+
+  Wire.begin();
+  Wire.setClock(400000);
+  Serial.begin(115200);
+
+  sensorinit(deviceaddress, GPIO1pin, TimingBudgetInMs, InterMeasurementInMs, OffsetValue);
 }
 
 void execrepeat(uint16_t withlaststate)
@@ -97,6 +94,7 @@ void loop()
            Serial.println(F("distance>=3000"));
            searching();
            laststate = 0;
+           settiming(deviceaddress, 0);
         }
         else if (distance<3000 && distance>=1800 && laststate!=1)
         {
@@ -105,6 +103,7 @@ void loop()
            togreen();
            showcolour(0,255,0);
            laststate = 1;
+           settiming(deviceaddress, 0);
         }
         else if (distance<1800 && distance>=900 && laststate!=2)
         {
@@ -114,6 +113,7 @@ void loop()
           tored();
           showcolour(255,0,0);
           laststate = 2;
+          settiming(deviceaddress, 0);
         }
         else if (distance<900 && laststate!=3)
         {
@@ -122,6 +122,7 @@ void loop()
           tored();
           redflash();
           laststate = 3;
+          settiming(deviceaddress, 0);
         }
         else
         {
@@ -137,16 +138,18 @@ void loop()
           Serial.println(F("distance>=0 && distance<900"));
           if (laststate==0)
           searchingfadetocolour(255,0,0);
+          
           tored();
           redflash();
-          
           laststate = 3;
+          settiming(deviceaddress, 0);
         }
         else if (distance>=900 && distance<1800 && laststate!=2)
         {
           Serial.println(F("distance>=900 && distance<180"));
           showcolour(255,0,0);
           laststate = 2;
+          settiming(deviceaddress, 0);
         }
         else if (distance>=1800 && distance<3000 && laststate!=1)
         {
@@ -154,6 +157,7 @@ void loop()
            togreen();
            showcolour(0,255,0);
            laststate = 1;
+           settiming(deviceaddress, 0);
         }
         else if (distance>3000 && laststate!=0)
         {
@@ -161,6 +165,7 @@ void loop()
            searchingfadeout();
            searching();
            laststate = 0;
+           settiming(deviceaddress, 0);
         }
         else
         {
@@ -178,23 +183,7 @@ void loop()
      }
      
      gotreading = 0;
-     Serial.println(F("-----------------------------------------------------------------------------"));
+     Serial.println(F("----------------------------------------------------------------------------"));
   }
   VL53L1X_ClearInterrupt(deviceaddress);
-  
-  //searching();
-  //searchingfadein();
-  //showcolour(0,255,0); //green
-  //tored();
-  //showcolour(255,0,0); //red
-  //delay(500);
-  //redflash();
-  //redflash();
-  //redflash();
-  //showcolour(255,0,0); //red
-  //delay(300);
-  //togreen();
-  //showcolour(0,255,0); //green
-  //searchingfadeout();
-  //searching();
 }

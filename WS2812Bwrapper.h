@@ -1,8 +1,8 @@
 void initWS2812B();
 void searching();
-void searchingfadein();
-void showcolour(int colourhue);
-void greentored();
+void searchingfadetocolour(int r, int g, int b);
+void showcolour(int r, int g, int b);
+void tored();
 void redflash();
-void redtogreen();
+void togreen();
 void searchingfadeout();

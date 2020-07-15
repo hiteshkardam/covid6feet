@@ -5,9 +5,13 @@
 CRGB leds[NUM_LEDS];
 
 int minbrightness = 2;
-int maxbrightness = 50;  //0-255
+int maxbrightness = 255;  //0-255
 int brightness = minbrightness;
 int dot;
+
+void tored();
+void togreen();
+
 
 void initWS2812B()
 {
@@ -15,132 +19,178 @@ void initWS2812B()
 }
 
 
+void brightnessrampup()
+{
+  while(brightness != maxbrightness)
+  {
+    brightness++;
+    FastLED.setBrightness(brightness);
+    FastLED.show();
+    FastLED.delay(2);
+  }
+}
+
+
+void brightnessrampdown()
+{
+  while(brightness != minbrightness)
+  {
+    brightness--;
+    FastLED.setBrightness(brightness);
+    FastLED.show();
+    FastLED.delay(2);
+  }
+}
+
+
 void searching()
 {
+  if (leds[0].green != 255)
+  {
+    for(int r=leds[0].red, g=leds[0].green; g<=255 && r>=0; r--,g++)
+    {
+      fill_solid(leds, NUM_LEDS, CRGB(r, g, 0));
+      FastLED.show();
+      FastLED.delay(1);
+    }
+  }
+  
+  brightnessrampdown();
+  
   for(dot=0; dot<NUM_LEDS; dot++)
   {
     if (dot==4)
     {
-      leds[dot] = CHSV(96, 255, brightness);
+      leds[dot] = CRGB(0, 255, 0);
     }
     else
     {
-      leds[dot] = CHSV(96, 255, brightness);
-      leds[NUM_LEDS-dot-1] = CHSV(96, 255, brightness);
+      leds[dot] = CRGB(0, 255, 0);
+      leds[NUM_LEDS-dot-1] = CRGB(0, 255, 0);
     }
-   
+    
+    FastLED.setBrightness(brightness);
     FastLED.show();
     
     if (dot==4)
     {
-      leds[dot] = CHSV(96, 0, 0);
+      leds[dot] = CRGB(0, 0, 0);
+    }
+    else if (dot==0)
+    {
+      leds[NUM_LEDS-dot-1] = CRGB(0, 255, 0);
+      leds[dot] = CRGB(0, 255, 0);
     }
     else
     {
-      leds[NUM_LEDS-dot-1] = CHSV(96, 0, 0);
-      leds[dot] = CHSV(96, 0, 0);
+      leds[NUM_LEDS-dot-1] = CRGB(0, 0, 0);
+      leds[dot] = CRGB(0, 0, 0);
     }
     delay(150);
   }
 }
 
 
-void searchingfadein()
+void searchingfadetocolour(int r, int g, int b)
 {
   for(dot=0; dot<=NUM_LEDS/2; dot++)
   {
     if (dot==4)
     {
-      leds[dot] = CHSV(96, 255, brightness);
+      leds[dot] = CRGB(r, g, b);
     }
     else
     {
-      leds[dot] = CHSV(96, 255, brightness);
-      leds[NUM_LEDS-dot-1] = CHSV(96, 255, brightness);
+      leds[dot] = CRGB(r, g, b);
+      leds[NUM_LEDS-dot-1] = CRGB(r, g, b);
     }
-    delay(150);
+    FastLED.delay(150);
+    FastLED.setBrightness(brightness);
     FastLED.show();
   }
-  delay(50);
-  while(brightness !=maxbrightness)
-  {
-    brightness++;
-    fill_solid(leds, NUM_LEDS, CHSV( 96, 255, brightness));
-    FastLED.show();
-    delay(5);
-  }
+  FastLED.delay(50);
+  brightnessrampup();
 }
 
 
 void searchingfadeout()
 {
-  while(brightness != minbrightness)
-  {
-    brightness--;
-    fill_solid(leds, NUM_LEDS, CHSV( 96, 255, brightness));
-    FastLED.show();
-    delay(5);
-  }
-  
-  delay(50);
+  brightnessrampdown();
+  FastLED.delay(150);
   for(dot = NUM_LEDS/2; dot>=0; dot--)
   {
     if (dot==4)
     {
-      leds[dot] = CHSV(96, 0, 0);
+      leds[dot] = CRGB(0, 0, 0);
     }
     else
     {
-      leds[dot] = CHSV(96, 0, 0);
-      leds[NUM_LEDS-dot-1] = CHSV(96, 0, 0);
+      leds[dot] = CRGB(0, 0, 0);
+      leds[NUM_LEDS-dot-1] = CRGB(0, 0, 0);
     }
     FastLED.show();
-    delay(150);
+    FastLED.delay(150);
   }
 }
 
 
-void showcolour(int colourhue)
+void showcolour(int r, int g, int b)
 {
   for(dot=0; dot<NUM_LEDS; dot++)
   {
-    leds[dot] = CHSV(colourhue, 255, brightness);
+    leds[dot] = CRGB(r, g, b);
     FastLED.show();
   }
+  
+  if (brightness != maxbrightness)
+  brightnessrampup();
 }
 
 
 void redflash()
 {
-  fill_solid(leds, NUM_LEDS, CHSV( 0, 255, brightness));
+  fill_solid(leds, NUM_LEDS, CRGB(255, 0, 0));
   FastLED.show();
-  delay(300);
-  fill_solid(leds, NUM_LEDS, CHSV( 0, 0, 0));
+  //FastLED.delay(300);
+  brightnessrampup();
+  fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
   FastLED.show();
-  delay(300);
-  fill_solid(leds, NUM_LEDS, CHSV( 0, 255, brightness));
+  FastLED.delay(300);
+  fill_solid(leds, NUM_LEDS, CRGB(255, 0, 0));
   FastLED.show();
-  delay(300);
+  FastLED.delay(300);
 }
 
 
-void greentored()
+void tored()
 {
-  for(int hue=96; hue>0; hue--)
+  if (leds[0].red != 255)
   {
-    fill_solid(leds, NUM_LEDS, CHSV(hue, 255, brightness));
-    FastLED.show();
-    delay(10);
+    for(int r=leds[0].red; r<=255; r++)
+    {
+      fill_solid(leds, NUM_LEDS, CRGB(r, 255-r, 0));
+      FastLED.show();
+      FastLED.delay(1);
+    }
   }
+  
+  if (brightness != maxbrightness)
+  brightnessrampup();
 }
 
 
-void redtogreen()
+void togreen()
 {
-  for(int hue=0; hue<96; hue++)
+  if (leds[0].green != 255)
   {
-    fill_solid(leds, NUM_LEDS, CHSV(hue, 255, brightness));
-    FastLED.show();
-    delay(10);
+    for(int g=leds[0].green; g<=255; g++)
+    {
+      fill_solid(leds, NUM_LEDS, CRGB(255-g, g, 0));
+      FastLED.show();
+      FastLED.delay(1);
+    }
   }
+  
+  if (brightness != maxbrightness)
+  brightnessrampup();
 }

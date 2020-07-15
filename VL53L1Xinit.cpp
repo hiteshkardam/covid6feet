@@ -50,12 +50,14 @@ void sensorinit(uint8_t deviceaddress, uint16_t GPIO1pin, uint16_t TimingBudgetI
 	Serial.println(status, HEX);
 	#endif
 	
+	/*
 	status = VL53L1X_SetDistanceThreshold (deviceaddress, 0, 3000, 3, 1); //measure only when between 0cm and 300cm(10ft)
 	#if DEBUG
 	Serial.print(F("VL53L1X_SetDistanceThreshold: "));
 	Serial.println(status, HEX);
 	#endif
-	
+	*/
+  
 	VL53L1X_SetTimingBudgetInMs(deviceaddress, TimingBudgetInMs);
 	#if DEBUG
 	Serial.print(F("VL53L1X_SetTimingBudgetInMs: "));

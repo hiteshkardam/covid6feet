@@ -73,7 +73,7 @@ void sensorinit(uint8_t deviceaddress, uint16_t GPIO1pin, uint16_t TimingBudgetI
 	status = VL53L1X_SetOffset(deviceaddress, OffsetValue);
 	#if DEBUG
 	Serial.print(F("VL53L1X_SetOffset: "));
-	Serial.println(OffsetValue, HEX);
+	Serial.println(OffsetValue);
 	#endif
 	
 	status = VL53L1X_StartRanging(deviceaddress);
@@ -81,4 +81,6 @@ void sensorinit(uint8_t deviceaddress, uint16_t GPIO1pin, uint16_t TimingBudgetI
 	Serial.print(F("VL53L1X_StartRanging: "));
 	Serial.println(status, HEX);
 	#endif
+	
+	Serial.println(F("-----------------------------------------------------------------------------"));
 }

@@ -26,16 +26,18 @@ void IRAM_ATTR ISR()
 
 void setup()
 {
-  initWS2812B();
-  
-  pinMode(GPIO1pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(GPIO1pin), ISR, FALLING);
-
-  Wire.begin();
-  Wire.setClock(400000);
-  Serial.begin(115200);
-
-  sensorinit(deviceaddress, GPIO1pin, TimingBudgetInMs, InterMeasurementInMs, OffsetValue);
+	Serial.println(F("-----------------------------------------------------------------------------"));
+	
+	initWS2812B();
+	
+	pinMode(GPIO1pin, INPUT_PULLUP);
+	attachInterrupt(digitalPinToInterrupt(GPIO1pin), ISR, FALLING);
+	
+	Wire.begin();
+	Wire.setClock(400000);
+	Serial.begin(115200);
+	
+	sensorinit(deviceaddress, GPIO1pin, TimingBudgetInMs, InterMeasurementInMs, OffsetValue);
 }
 
 void execrepeat(uint16_t withlaststate)
@@ -176,7 +178,7 @@ void loop()
      }
      
      gotreading = 0;
-     Serial.println(F("----------------------------------------------------------------------------"));
+     Serial.println(F("-----------------------------------------------------------------------------"));
   }
   VL53L1X_ClearInterrupt(deviceaddress);
   
